@@ -2,10 +2,22 @@ var models = require('../models/models.js');
 
 // GET /quizes
 exports.index = function(req, res) {
-  models.Quiz.findAll().then(function(quizes) {
-    res.render('quizes/index.ejs', { quizes: quizes});
-  })
+	var buscar;
+	if(req.query.search){
+		buscar="%" +req.query.search +"%";
+	}
+	console.log(buscar);		
+	if(buscar){
+		models.Quiz.findAll({where: ["pregunta like ?", buscar]}).then(function(quizes) {	
+			res.render('quizes/index.ejs', {quizes: quizes});
+	})	
+	} else {
+		models.Quiz.findAll().then(function(quizes) {	
+			res.render('quizes/index.ejs', {quizes: quizes});
+	})
+	}	
 };
+
 
 // GET /quizes/:id
 exports.show = function(req, res) {
