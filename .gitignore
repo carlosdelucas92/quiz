@@ -3,7 +3,3 @@ node_modules
 npm-debug.log
 quiz.sqlite
 .env
-public/javascripts/material*
-public/stylesheets/material*
-public/font/material*
-public/font/roboto
