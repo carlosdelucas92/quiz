@@ -2,7 +2,8 @@
 	
 	<input placeholder="Busca una pregunta" type="text" name="search" />
 
-	<input type="submit" value="Enviar"/>
+	</button><button class="waves-effect waves-teal btn-flat" type="sumit">Enviar<i class="mdi-content-send right"></i>
+	</button>
 	
 </form>
   <table>
@@ -10,3 +11,7 @@
      <tr><td><a href="quizes/<%= quizes[i].id %>"><%= quizes[i].pregunta %></a></td></tr> 
   <% } %>
   </table>
+
+<a href="/quizes/new">
+  <button class="waves-effect waves-teal btn-flat" type="button">Crear pregunta<i class="mdi-content-create right"></i></a>
+</button>
