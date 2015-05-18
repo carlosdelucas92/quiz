@@ -26,6 +26,14 @@
     <main>
       <div class="container">
         <div class="main">
+          <% if (errors.length) { %>
+            <span id='ErrorMsgs'>
+              Corregir errores:<br/>
+              <% for (var i in errors) { %>
+                <span> <%= errors[i].message %> </span><br/>
+              <% } %>
+            </span>
+          <% } %>
           <%- body %>
         </div>
       </div>
