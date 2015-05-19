@@ -10,26 +10,51 @@
     <link type="text/css" rel='stylesheet' href='/stylesheets/style.css' />
     <link type="text/css" rel='stylesheet' href='/stylesheets/wide.css' media='only screen and (min-width: 530px) and (min-device-width: 481px)'/>
     <link rel='stylesheet' href='/stylesheets/smartphone.css' media='only screen and (max-width: 480px)'/>
-
+    <!-- Jquery  & Materialize import -->
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.11.2.min.js"></script>
     <script type="text/javascript" src="/javascripts/materialize.js"></script>
+    <!-- .button-collapse Init (jquery)-->
+    <script type="text/javascript">
+        (function($){
+          $(function(){
+
+            $('.button-collapse').sideNav();
+
+          }); // end of document ready
+        })(jQuery); // end of jQuery name space
+    </script>    
   </head>
   <body>
-  <nav>
-    <div class="nav-wrapper teal grey darken-4">
-      <a href="/" class="brand-logo">QUIZ</a>
-      <ul id="nav-mobile" class="right hide-on-med-and-down">
-        <li>
-          <%if(!session.user){%>
-            <span class="right"><a href="/login">Login</a></span>
-          <%}else{%>
-            <span class="right"> <%=session.user.username%> <a href="/logout">Logout</a></span>
-          <%}%> 
-        </li>       
-        <li><a href="/authors">Autores</a></li>
-        <li><a href="/quizes">Preguntas</a></li>        
-      </ul>
-    </div>
-  </nav>
+    <!-- //Boton mobil plegable --> 
+    <nav> 
+      <div class="nav-wrapper teal grey darken-4">
+        <a href="/" class="brand-logo">QUIZ</a>
+        <a href="#" data-activates="mobile-demo" class="button-collapse"><i class="mdi-navigation-menu"></i></a>
+        <ul class="right hide-on-med-and-down">
+          <li>
+            <%if(!session.user){%>
+              <a href="/login">Login<i class="mdi-social-person-outline right"></i></a>
+            <%}else{%>
+              <a href="/logout"><%=session.user.username%> <i class="mdi-action-exit-to-app right"></i></a>
+            <%}%> 
+          </li>       
+          <li><a href="/authors">Autores</a></li>
+          <li><a href="/quizes">Preguntas</a></li>
+        </ul>
+        <ul class="side-nav" id="mobile-demo">
+          <li>
+            <%if(!session.user){%>
+              <a href="/login">Login<i class="mdi-social-person-outline right"></i></a>
+            <%}else{%>
+               <a href="/logout"> <%=session.user.username%> <i class="mdi-action-exit-to-app right"></i></a>
+            <%}%> 
+          </li>       
+          <li><a href="/authors">Autores<i class="mdi-social-people right"></i></a></li>
+          <li><a href="/quizes">Preguntas<i class="mdi-action-question-answer right"></i></a></li>
+        </ul>
+      </div>
+    </nav>  
+
     <main>
       <div class="container">
         <div class="main">
