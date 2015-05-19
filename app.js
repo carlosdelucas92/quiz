@@ -25,7 +25,14 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
 app.use(cookieParser('Quiz 2015'));
-app.use(session());
+app.use(session({
+    resave: true,
+    saveUninitialized: true,
+    secret: 'Quiz 2015',
+    cookie: {
+        maxAge: 2 * 60 * 1000
+    }
+}));
 
 app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, 'public')));

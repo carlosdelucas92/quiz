@@ -1,3 +1,4 @@
+var Sequelize = require('sequelize');
 var models = require('../models/models.js');
 
 // Autoload - :id
@@ -107,3 +108,30 @@ exports.destroy = function(req, res) {
     res.redirect('/quizes');
   }).catch(function(error){next(error)});
 };
+
+exports.statistics = function(req, res, next) {
+  var statistics = {};
+  models.Quiz.count()
+  .then(function(count) {
+    statistics.quiz_count = count;
+    return models.Comment.count();
+  })
+  .then(function(count) {
+    statistics.comment_count = count;
+    return models.Comment
+        .findAll({
+          attributes: [ [ Sequelize.fn('count', Sequelize.fn('DISTINCT', Sequelize.col('QuizId'))), 'count' ] ],
+          raw : true
+        });
+  })
+  .then(function(result) {
+    var count = result[0].count;
+    var avg = statistics.comment_count / statistics.quiz_count;
+    statistics.avg_comments_per_quiz = Math.round(avg * 100) / 100;
+    statistics.quiz_count_w_comments = count;
+    statistics.quiz_count_wo_comments = statistics.quiz_count - count;
+    res.locals.statistics = statistics;
+    res.render('quizes/statistics', {errors: []});
+  })
+};
+
