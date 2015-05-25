@@ -52,6 +52,13 @@
         <ul class="side-nav" id="mobile-demo">
           <li>
             <%if(!session.user){%>
+              <a href="/user">Sign up<i class="mdi-action-assignment-ind right"></i></a>
+            <%}else{%>
+            <a href="/user/<%=session.user.id%>/edit">Settings<i class="mdi-action-settings right"></i></a>                          
+            <%}%> 
+          </li>
+          <li>
+            <%if(!session.user){%>
               <a href="/login">Login<i class="mdi-social-person-outline right"></i></a>
             <%}else{%>
                <a href="/logout"> <%=session.user.username%> <i class="mdi-action-exit-to-app right"></i></a>
