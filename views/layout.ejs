@@ -33,11 +33,18 @@
         <ul class="right hide-on-med-and-down">
           <li>
             <%if(!session.user){%>
-              <a href="/login">Login<i class="mdi-social-person-outline right"></i></a>
+              <a href="/user">Sign up</a>
             <%}else{%>
-              <a href="/logout"><%=session.user.username%> <i class="mdi-action-exit-to-app right"></i></a>
+            <a href="/user/<%=session.user.id%>/edit">Settings</a>                          
             <%}%> 
-          </li>       
+          </li>
+          <li>
+            <%if(!session.user){%>
+             <a href="/login">Login<i class="mdi-social-person-outline right"></i></a>
+            <%}else{%>
+              <a href="/logout"><%=session.user.username%> <i class="mdi-action-exit-to-app right"></i></a>             
+            <%}%> 
+          </li> 
           <li><a href="/authors">Autores</a></li>
           <li><a href="/quizes">Preguntas</a></li>
           <li><a href='/quizes/statistics'>Estadisticas</a></li>
