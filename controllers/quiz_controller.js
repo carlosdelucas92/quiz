@@ -32,10 +32,16 @@ exports.load = function(req, res, next, quizId){
 		).catch(function(error){next(error)});
 };
 
-// GET /quizes
+// GET /users/:userId/quizes
 exports.index = function(req, res) {
+  
+  var options = {};
+  if(req.user){
+    options.where = {UserId: req.user.id}
+  }
+
 	var buscar;
-	if(req.query.search){
+	 if(req.query.search){
 		buscar="%" +req.query.search +"%";
 	}
 	console.log(buscar);		
@@ -44,7 +50,7 @@ exports.index = function(req, res) {
 			res.render('quizes/index.ejs', {quizes: quizes});
 	})	
 	} else {
-		models.Quiz.findAll().then(function(quizes) {	
+		models.Quiz.findAll(options).then(function(quizes) {	
 			res.render('quizes/index.ejs', {quizes: quizes, errors: []});
 		}).catch(function(error){next(error)});
 	}	
