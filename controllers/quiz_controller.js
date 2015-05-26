@@ -35,6 +35,7 @@ exports.load = function(req, res, next, quizId){
 // GET /users/:userId/quizes
 
 exports.index = function(req, res) {
+    var buscar;
   var options = {};
    var marca = [];
   var favoritos = [];
@@ -55,14 +56,14 @@ if (req.session.user) {
      if (favoritos[k].QuizId === quizes[j].id) {marca[j] = "marcado";}
      }
    }
-   res.render('quizes/index', { quizes: quizes, marca: marca, errors: []});
+   res.render('quizes/index.ejs', { quizes: quizes, marca: marca, errors: []});
    }).catch(function(error) { next(error);});
    } 
   });
 
 } else {
 
-	var buscar;
+
 	 if(req.query.search){
 		buscar="%" +req.query.search +"%";
 	}
@@ -71,6 +72,10 @@ if (req.session.user) {
 		models.Quiz.findAll({where: ["pregunta like ?", buscar]}).then(function(quizes) {	
 		res.render('quizes/index.ejs', {quizes: quizes});
 	  }).catch(function(error) { next(error);});
+  } else {
+   models.Quiz.findAll(options).then(function(quizes) {  
+     res.render('quizes/index.ejs', {quizes: quizes, errors: []});
+   }).catch(function(error){next(error)});
   }
 }};
 
