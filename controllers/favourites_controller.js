@@ -10,8 +10,9 @@ exports.show = function(req, res) {
 		};
 		models.Quiz.findAll({ where: { id: quiz_ids }})
 		  .then(function(quizes) {
-			res.render('favourites/show', {quizes: quizes, errors: []});
-		  });
+			res.render('favourites/show', {quizes: quizes, errors: []}
+		   );
+		});
 	}).catch(function(error) { next(error);});
 };
 

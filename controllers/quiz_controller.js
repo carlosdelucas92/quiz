@@ -21,78 +21,57 @@ exports.load = function(req, res, next, quizId){
                 id: Number(quizId)
             },
             include: [{
-                model: models.Comment
+                model: models.Comment                
             }]
         }).then(function(quiz) {
-			if(quiz){
-				req.quiz = quiz;
-				next();
-			} else{ next(new Error('No existe quizId='+ quizId))}
-		}
-		).catch(function(error){next(error)});
+      if(quiz){
+        req.quiz = quiz;
+        next();
+      } else{ next(new Error('No existe quizId='+ quizId))}
+    }
+    ).catch(function(error){next(error)});
 };
 
 // GET /users/:userId/quizes
-
 exports.index = function(req, res) {
-    var buscar;
+  var marca = [];
   var options = {};
-   var marca = [];
-  var favoritos = [];
-
   if(req.user){
     options.where = {UserId: req.user.id}
   }
-  
-if (req.session.user) {
- models.Favourites.findAll({ where: { UserId: Number(req.session.user.id) }})
- .then(function(f) {
-   favoritos = f;
-   if (req.query.search === undefined) {
-   models.Quiz.findAll(options).then(function(quizes) {
-   for (j in quizes) {
-     marca[j] = "desmarcado";
-     for (k in favoritos) {
-     if (favoritos[k].QuizId === quizes[j].id) {marca[j] = "marcado";}
-     }
-   }
-   res.render('quizes/index.ejs', { quizes: quizes, marca: marca, errors: []});
-   }).catch(function(error) { next(error);});
-   } 
-  });
 
-} else {
+  var buscar;
+  if(req.query.search){
+    buscar="%" +req.query.search +"%";
+  } 
 
-
-	 if(req.query.search){
-		buscar="%" +req.query.search +"%";
-	}
-	console.log(buscar);		
-	if(buscar){
-		models.Quiz.findAll({where: ["pregunta like ?", buscar]}).then(function(quizes) {	
-		res.render('quizes/index.ejs', {quizes: quizes});
-	  }).catch(function(error) { next(error);});
+  if(buscar){
+    models.Quiz.findAll({where: ["pregunta like ?", buscar]}).then(function(quizes) { 
+      res.render('quizes/index.ejs', {quizes: quizes, marca: marca, errors: []});
+    })  
   } else {
-   models.Quiz.findAll(options).then(function(quizes) {  
-     res.render('quizes/index.ejs', {quizes: quizes, errors: []});
-   }).catch(function(error){next(error)});
+     models.Favourites.findAll({ where: { UserId: Number(req.session.user.id) }})
+      .then(function(favoritos) { 
+      models.Quiz.findAll(options)
+        .then(function(quizes) {
+          for (j in quizes) {
+            marca[j] = "desmarcado";
+            for (k in favoritos) {
+              if (favoritos[k].QuizId === quizes[j].id) {marca[j] = "marcado";}
+            }
+          }
+      res.render('quizes/index.ejs', { quizes: quizes, marca: marca, errors: []});
+      });        
+    }).catch(function(error){next(error)});    
   }
-}};
+};
+
 
 
 // GET /quizes/:id
 exports.show = function(req, res) {
-  var marca = "desmarcado";
-  if (req.session.user) {
- models.Favourites.find({ where: { UserId: Number(req.session.user.id), QuizId: Number(req.quiz.id) }})
- .then(function(favorito) {
-   if (favorito) {marca = "marcado";};
-   res.render('quizes/show', { quiz: req.quiz, marca: marca, errors: []});
- });
-  } else {
- res.render('quizes/show', { quiz: req.quiz, marca: marca, errors: []});
-  }
-};            // req.quiz: instancia de quiz cargada con autoload
+  res.render('quizes/show', { quiz: req.quiz, errors: []});
+};
 
 // GET /quizes/:id/answer
 exports.answer = function(req, res) {
@@ -110,7 +89,7 @@ exports.new = function(req, res){
   );
 
   res.render('quizes/new', {quiz: quiz, errors: []});
-};	
+};  
 
 // POST /quizes/create
 exports.create = function(req, res){
@@ -118,8 +97,8 @@ exports.create = function(req, res){
   if(req.files.image){
     req.body.quiz.image = req.files.image.name;
   }
-	var quiz = models.Quiz.build(req.body.quiz);
-	quiz.validate().then(function(err){
+  var quiz = models.Quiz.build(req.body.quiz);
+  quiz.validate().then(function(err){
       if (err) {
         res.render('quizes/new', {quiz: quiz, errors: err.errors});
       } else {
@@ -133,8 +112,8 @@ exports.create = function(req, res){
 
 // GET /quizes/:id/edit
 exports.edit = function(req, res){
-	var quiz = req.quiz // autoload de instancia de quit
-	res.render('quizes/edit', {quiz: quiz, errors: []});
+  var quiz = req.quiz // autoload de instancia de quit
+  res.render('quizes/edit', {quiz: quiz, errors: []});
 };
 
 // PUT /quizes/:id
@@ -190,5 +169,5 @@ exports.statistics = function(req, res, next) {
     statistics.quiz_count_wo_comments = statistics.quiz_count - count;
     res.locals.statistics = statistics;
     res.render('quizes/statistics', {errors: []});
-  }).catch(function(error){next(error)});
+  })
 };
