@@ -8,23 +8,35 @@
 </form>
 
 <table>
-  <% var i; for (i=0; i < quizes.length; i++) { %>        
-  <tr>
-    <td><a href="/quizes/<%= quizes[i].id %>"><%= quizes[i].pregunta %></a></td>
-    <%if(session.user){
-      if (session.user.isAdmin || session.user.id === quizes[i].UserId) {%>
-      <td><a href="/quizes/<%= quizes[i].id %>/edit"><button class="waves-effect waves-teal btn-flat" type="button">
-        editar<i class="mdi-editor-border-color right"></i></button></a></td>
+  <% var i; for (i=0; i < quizes.length; i++) { %>
+    <tr>
+      <td><a href="/quizes/<%= quizes[i].id %>"><%= quizes[i].pregunta %></a></td>
+      <%if(session.user){%>
+        <%if (session.user.isAdmin || session.user.id === quizes[i].UserId) {%>
+          <td><a href="/quizes/<%= quizes[i].id %>/edit"><button class="waves-effect waves-teal btn-flat" type="button">
+            editar<i class="mdi-editor-border-color right"></i></button></a></td>    
+          <td>
+            <form method="post" action="/quizes/<%= quizes[i].id %>?_method=delete">
+              <button class="waves-effect waves-teal btn-flat" type="submit" onClick="return confirm('Borrar: <%= quizes[i].pregunta %>');">
+                borrar<i class="mdi-navigation-cancel right"></i>
+              </button>
+            </form>
+          </td>
+        <%}%>
       <td>
-        <form method="post" action="/quizes/<%= quizes[i].id %>?_method=delete">
-          <button class="waves-effect waves-teal btn-flat" type="submit" onClick="return confirm('Borrar: <%= quizes[i].pregunta %>');">
-            borrar<i class="mdi-navigation-cancel right"></i>
-          </button>
-        </form>
+        <%if(marca[i] === "desmarcado"){%>
+          <form method="post" action="/user/<%= session.user.id %>/favourites/<%= quizes[i].id %>?_method=put">
+            <button class="waves-effect waves-teal btn-flat" type="submit"><i class="large mdi-action-stars"></i></button>
+          </form>
+        <%};%>
+        <%if(marca[i] === "marcado"){%>
+          <form method="post" action="/user/<%= session.user.id %>/favourites/<%= quizes[i].id %>?_method=delete">
+            <button class="waves-effect waves-teal btn-flat" type="submit" onClick="return confirm('Eliminar: <%= quizes[i].pregunta %> de Favoritos');"><i class="large mdi-action-star-rate"></i></button>
+          </form>
+        <%}%>
       </td>
-      <%}
-    }%>
-  </tr> 
+    <%}%>
+    </tr>
   <% } %>
 </table>
 

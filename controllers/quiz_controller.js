@@ -33,12 +33,34 @@ exports.load = function(req, res, next, quizId){
 };
 
 // GET /users/:userId/quizes
+
 exports.index = function(req, res) {
-  
   var options = {};
+   var marca = [];
+  var favoritos = [];
+
   if(req.user){
     options.where = {UserId: req.user.id}
   }
+  
+if (req.session.user) {
+ models.Favourites.findAll({ where: { UserId: Number(req.session.user.id) }})
+ .then(function(f) {
+   favoritos = f;
+   if (req.query.search === undefined) {
+   models.Quiz.findAll(options).then(function(quizes) {
+   for (j in quizes) {
+     marca[j] = "desmarcado";
+     for (k in favoritos) {
+     if (favoritos[k].QuizId === quizes[j].id) {marca[j] = "marcado";}
+     }
+   }
+   res.render('quizes/index', { quizes: quizes, marca: marca, errors: []});
+   }).catch(function(error) { next(error);});
+   } 
+  });
+
+} else {
 
 	var buscar;
 	 if(req.query.search){
@@ -47,20 +69,25 @@ exports.index = function(req, res) {
 	console.log(buscar);		
 	if(buscar){
 		models.Quiz.findAll({where: ["pregunta like ?", buscar]}).then(function(quizes) {	
-			res.render('quizes/index.ejs', {quizes: quizes});
-	})	
-	} else {
-		models.Quiz.findAll(options).then(function(quizes) {	
-			res.render('quizes/index.ejs', {quizes: quizes, errors: []});
-		}).catch(function(error){next(error)});
-	}	
-};
+		res.render('quizes/index.ejs', {quizes: quizes});
+	  }).catch(function(error) { next(error);});
+  }
+}};
 
 
 // GET /quizes/:id
 exports.show = function(req, res) {
-  res.render('quizes/show', { quiz: req.quiz, errors: []});
-};
+  var marca = "desmarcado";
+  if (req.session.user) {
+ models.Favourites.find({ where: { UserId: Number(req.session.user.id), QuizId: Number(req.quiz.id) }})
+ .then(function(favorito) {
+   if (favorito) {marca = "marcado";};
+   res.render('quizes/show', { quiz: req.quiz, marca: marca, errors: []});
+ });
+  } else {
+ res.render('quizes/show', { quiz: req.quiz, marca: marca, errors: []});
+  }
+};            // req.quiz: instancia de quiz cargada con autoload
 
 // GET /quizes/:id/answer
 exports.answer = function(req, res) {
@@ -158,6 +185,5 @@ exports.statistics = function(req, res, next) {
     statistics.quiz_count_wo_comments = statistics.quiz_count - count;
     res.locals.statistics = statistics;
     res.render('quizes/statistics', {errors: []});
-  })
+  }).catch(function(error){next(error)});
 };
-

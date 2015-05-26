@@ -1,3 +1,18 @@
+<%if(session.user){%>
+	<%if(marca === "desmarcado"){%>
+		<form method="post" action="/user/<%= session.user.id %>/favourites/<%= quiz.id %>?_method=put">
+			<input  type="submit" value=""><i class="mdi-action-stars"></i>
+		</form>
+	<%};%>
+	<%if(marca === "marcado"){%>
+		<form method="post" action="/user/<%= session.user.id %>/favourites/<%= quiz.id %>?_method=delete">
+		 	<button  type="submit" onClick="return confirm('Eliminar: <%= quiz.pregunta %> de Favoritos');"><i class="mdi-action-star-rate"></i></button>
+		</form>
+	<%}%>
+<%}%>
+
+
+
 <%if (quiz.image){%>
 <p><img class="quiz_img" src="/media/<%= quiz.image %>"></p>
 <%}%>
